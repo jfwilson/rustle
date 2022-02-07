@@ -1,8 +1,8 @@
-use structopt::StructOpt;
+use std::fs::File;
 use std::io;
 use std::io::BufRead;
 use std::io::BufReader;
-use std::fs::File;
+use structopt::StructOpt;
 
 /// Filters a dictionary of words for those that match the specified pattern.
 #[derive(StructOpt)]
@@ -12,20 +12,20 @@ struct Cli {
     /// The outcome that you got, in the form `.?!..`
     outcome: String,
     /// The path to the dictionary file to use
-    #[structopt(default_value="dict.txt", parse(from_os_str))]
+    #[structopt(default_value = "dict.txt", parse(from_os_str))]
     words: std::path::PathBuf,
 }
 
 fn main() -> io::Result<()> {
     let args = Cli::from_args();
-    // println!("words = {}", args.words.display());
-    // println!("guess = {}", args.guess);
-    // println!("outcome = {}", args.outcome);
-
     if args.words.to_str() == Some("-") {
         return print_compatible_words(std::io::stdin().lock(), &args.guess, &args.outcome);
     } else {
-        return print_compatible_words(BufReader::new(File::open(args.words)?), &args.guess, &args.outcome);
+        return print_compatible_words(
+            BufReader::new(File::open(args.words)?),
+            &args.guess,
+            &args.outcome,
+        );
     }
 }
 
@@ -50,15 +50,18 @@ fn is_compatible(line: &str, guess: &str, outcome: &str) -> bool {
     // Check exact matches, building up a list of what's left
     for i in 0..outcome.len() {
         match outcome.as_bytes()[i] {
-            33u8 => { // char must exist at this location
+            b'!' => {
+                // char must exist at this location
                 exact_matches_ok &= guess.as_bytes()[i] == line.as_bytes()[i];
             }
-            63u8 => { // char must exist at a different location
+            b'?' => {
+                // char must exist at a different location
                 exact_matches_ok &= guess.as_bytes()[i] != line.as_bytes()[i];
                 must_exist.push(guess.as_bytes()[i]);
                 remainder.push(line.as_bytes()[i]);
             }
-            _ => {    // char must NOT exist, at this location or anywhere in the remainder
+            _ => {
+                // char must NOT exist, at this location or anywhere in the remainder
                 exact_matches_ok &= guess.as_bytes()[i] != line.as_bytes()[i];
                 must_not_exist.push(guess.as_bytes()[i]);
                 remainder.push(line.as_bytes()[i]);

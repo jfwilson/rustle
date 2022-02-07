@@ -69,6 +69,7 @@ Outputs CSV data with the following headings:
 * `MEDIAN` - the median **SCORE** of using this word (typical scenario)
 * `MAX` - the maximum **SCORE** of using this word (worst case scenario)
 * `SUM` - the sum of all **SCORE**s (divide this by `COUNT` to get the average)
+* `IS_CANDIDATE` - whether this guess word is also one of the answer words
 
 where **SCORE** is the number of possible answer words that would be left if this word was chosen (the _lower_ the better).
 
@@ -85,3 +86,12 @@ and tested by running
 ```shell
 cargo test
 ```
+
+## Limitations
+
+This has been written as an exercise in learning Rust rather than as a robust tool
+for wide use.
+
+* Input validation is minimal - all words must be 5 letters long and also 5 bytes when encoded in UTF-8
+(only the letters a-z are expected). Behaviour is undefined otherwise.
+* The program is single threaded and could no doubt be better optimized - the [simd](https://doc.rust-lang.org/nightly/std/simd/index.html) package looks relevant
