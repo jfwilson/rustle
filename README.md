@@ -90,13 +90,13 @@ The `filter` and `rank` tools can be put together to come up with the 'best' opt
 For example, if your first guess is `aures` and you get the outcome `?.??.`:
 
 ```shell
-filter aures '?.??.' dict.txt | rank - dict.txt | sort -n -k 5 -t ',' | head -20
+filter aures '?.??.' dict.txt | rank - dict.txt | sort -t ',' -k 5n -k 6r | head -20
 ```
 
 If your next guess is `react` and you get the outcome `??!..`:
 
 ```shell
-filter aures '?.??.' dict.txt | filter react '??!..' - | rank - dict.txt | sort -n -k 5 -t ',' | head -20
+filter aures '?.??.' dict.txt | filter react '??!..' - | rank - dict.txt | sort -t ',' -k 5n -k 6r | head -20
 ```
 
 ## Build and test
