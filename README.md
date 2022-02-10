@@ -73,6 +73,32 @@ Outputs CSV data with the following headings:
 
 where **SCORE** is the number of possible answer words that would be left if this word was chosen (the _lower_ the better).
 
+## Putting it together
+
+Exact results from the `rank` tool will depend on the dictionary in use, the tool currently applies equal
+weighting to each word listed in the answers dictionary. The [dict.txt](dict.txt) file contains the full
+dictionary of words allowed in the Wordle game (correct at time of writing), however this contains many dubious
+words that are unlikely to be the actual answer. A better rank might be to weight words according to how common
+they are, or more simply just use a dictionary of the 'most likely' answer words (at least for the opening guess).
+
+Using the full Wordle dictionary (`dict.txt`), the best opening guesses appear to be words containing the letters `a`, `e`, `r` and `s` e.g. `lares` and `aures`.
+Words with triple letters and/or very uncommon letters are rated as the worst opening
+guesses, e.g. `mummy`, `yuppy`, `fuzzy` and `xylyl`.
+
+The `filter` and `rank` tools can be put together to come up with the 'best' options for the next guess as follows:
+
+For example, if your first guess is `aures` and you get the outcome `?.??.`:
+
+```shell
+filter aures '?.??.' dict.txt | rank - dict.txt | sort -n -k 5 -t ',' | head -20
+```
+
+If your next guess is `react` and you get the outcome `??!..`:
+
+```shell
+filter aures '?.??.' dict.txt | filter react '??!..' - | rank - dict.txt | sort -n -k 5 -t ',' | head -20
+```
+
 ## Build and test
 
 The repository is built by running
