@@ -132,5 +132,7 @@ mod tests {
         assert_eq!(std::str::from_utf8(&cmp("shape", "apple")).unwrap(), "..??!");
         assert_eq!(std::str::from_utf8(&cmp("apple", "plump")).unwrap(), ".???.");
         assert_eq!(std::str::from_utf8(&cmp("plump", "apple")).unwrap(), "??..?");
+        assert_eq!(std::str::from_utf8(&cmp("elude", "ulcer")).unwrap(), "?!?..");
+        assert_eq!(std::str::from_utf8(&cmp("ulcer", "elude")).unwrap(), "?!.?.");
     }
 }

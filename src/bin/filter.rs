@@ -72,15 +72,6 @@ fn is_compatible(line: &str, guess: &str, outcome: &str) -> bool {
         return false;
     }
 
-    // Check must_not_exist
-    for m in must_not_exist {
-        for r in &remainder {
-            if m == *r {
-                return false;
-            }
-        }
-    }
-
     // Check must_exist
     'outer: for m in must_exist {
         for (i, r) in remainder.iter().enumerate() {
@@ -90,6 +81,15 @@ fn is_compatible(line: &str, guess: &str, outcome: &str) -> bool {
             }
         }
         return false;
+    }
+
+    // Check must_not_exist
+    for m in must_not_exist {
+        for r in &remainder {
+            if m == *r {
+                return false;
+            }
+        }
     }
 
     return true;
@@ -132,6 +132,8 @@ mod tests {
     #[test]
     fn misplaced_match() {
         assert_eq!(is_compatible("aplpe", "apple", "!!??!"), true);
+        assert_eq!(is_compatible("ulcer", "elude", "?!?.."), true);
+        assert_eq!(is_compatible("elude", "ulcer", "?!.?."), true);
     }
 
     #[test]
@@ -142,5 +144,6 @@ mod tests {
     #[test]
     fn misplaced_too_few_match() {
         assert_eq!(is_compatible("aplie", "apple", "!!??!"), false);
+        assert_eq!(is_compatible("ulcer", "elude", "?!?.?"), false);
     }
 }
